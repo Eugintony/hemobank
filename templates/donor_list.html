@@ -1,63 +1,84 @@
-<!DOCTYPE html>
-<html>
-<head>
+{% extends "base.html" %}
+{% block title %}Donors — HemoBank{% endblock %}
+{% block page_title %}Donor List{% endblock %}
+{% block page_subtitle %}All registered blood donors{% endblock %}
 
-<title>Donor List</title>
+{% block content %}
 
 <style>
-
-body{
-font-family:Arial;
-background:#f4f6f8;
-padding:20px;
-}
-
-.top{
-display:flex;
-gap:10px;
-margin-bottom:20px;
-}
-
-input,select{
-padding:8px;
-}
-
-.donor-card{
+.donor-card {
 background:white;
-padding:15px;
-margin-bottom:12px;
-border-radius:8px;
-box-shadow:0px 2px 6px rgba(0,0,0,.15);
+border-radius:14px;
+border:1px solid #e8eaed;
+padding:24px;
+transition:.2s;
+box-shadow:0 1px 4px rgba(0,0,0,.05);
 }
-
-button{
-background:#b91c1c;
+.donor-card:hover{
+transform:translateY(-3px);
+box-shadow:0 8px 24px rgba(0,0,0,.1);
+border-color:rgba(230,57,70,.25);
+}
+.donor-avatar{
+width:48px;
+height:48px;
+border-radius:50%;
+background:#fef2f2;
+color:#e63946;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:700;
+flex-shrink:0;
+}
+.bt-badge{
+display:inline-flex;
+align-items:center;
+gap:5px;
+padding:5px 12px;
+background:#fef2f2;
+color:#e63946;
+border-radius:20px;
+font-weight:700;
+}
+.donor-meta{
+display:flex;
+align-items:center;
+gap:7px;
+font-size:.82rem;
+color:#6b7280;
+margin-bottom:7px;
+}
+.view-btn{
+padding:9px 20px;
+background:#e63946;
 color:white;
-border:none;
-padding:6px 12px;
-border-radius:5px;
-cursor:pointer;
+border-radius:8px;
+font-weight:700;
+text-decoration:none;
 }
-
-button:hover{
-background:#991b1b;
+.view-btn:hover{
+background:#c1121f;
 }
-
 </style>
 
-</head>
 
-<body>
+<!-- Toolbar -->
 
-<h2>Registered Donors</h2>
+<div style="background:white;border-radius:14px;border:1px solid #e8eaed;padding:20px 24px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,0.05);">
 
-<div class="top">
+<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
 
-<input id="search" placeholder="Search donor">
+<input
+type="text"
+id="searchInput"
+placeholder="Search by name, email, or phone..."
+style="flex:1;padding:10px;border:1.5px solid #e8eaed;border-radius:10px;"
+>
 
-<select id="blood">
+<select id="bloodFilter" onchange="filterByBlood(this.value)">
 
-<option value="all">All Blood</option>
+<option value="all">All Blood Types</option>
 
 <option>A+</option>
 <option>A-</option>
@@ -70,41 +91,48 @@ background:#991b1b;
 
 </select>
 
+<a href="/donors/register" class="view-btn">
+
+Register Donor
+
+</a>
+
 </div>
 
-<div id="donorCount"></div>
-
-<div id="donorsList">
+<p id="donorCount" style="margin-top:10px;color:#9ca3af">
 
 Loading donors...
 
+</p>
+
 </div>
+
+
+<!-- GRID -->
+
+<div id="donorGrid"
+style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;">
+
+</div>
+
 
 <script>
 
 let allDonors=[];
 
+function getInitials(name){
 
+if(!name) return "NA";
 
-async function loadDonors(){
+return name.split(" ")
 
-try{
+.map(n=>n[0])
 
-const response = await fetch("/api/donors");
+.join("")
 
-allDonors = await response.json();
+.toUpperCase()
 
-renderDonors(allDonors);
-
-}
-
-catch(e){
-
-document.getElementById("donorsList").innerHTML=
-
-"<p style='color:red'>Failed loading donors</p>";
-
-}
+.slice(0,2);
 
 }
 
@@ -112,45 +140,113 @@ document.getElementById("donorsList").innerHTML=
 
 function renderDonors(donors){
 
-const container=document.getElementById("donorsList");
+const grid=document.getElementById("donorGrid");
 
-const count=document.getElementById("donorCount");
+const cnt=document.getElementById("donorCount");
 
 if(!donors.length){
 
-container.innerHTML="<p>No donors found</p>";
+grid.innerHTML=`
 
-count.innerHTML="0 donors";
+<div style="grid-column:1/-1;text-align:center;padding:50px">
+
+No donors found
+
+</div>
+
+`;
+
+cnt.textContent="0 donors";
 
 return;
 
 }
 
-count.innerHTML=
 
-`Showing ${donors.length} donors`;
+cnt.textContent=
 
-container.innerHTML=
+`Showing ${donors.length} of ${allDonors.length} donors`;
 
-donors.map(d=>`
+
+grid.innerHTML=donors.map(d=>`
 
 <div class="donor-card">
 
-<h3>${d.name}</h3>
+<div style="display:flex;justify-content:space-between">
 
-<p>Blood : ${d.blood_type}</p>
+<div style="display:flex;gap:14px">
 
-<p>Age : ${d.age}</p>
+<div class="donor-avatar">
 
-<p>Email : ${d.email}</p>
+${getInitials(d.name)}
 
-<p>Phone : ${d.phone}</p>
+</div>
 
-<button onclick="deleteDonor(${d.id})">
+<div>
 
-Delete
+<b>${d.name}</b>
 
-</button>
+<div>ID : ${d.id}</div>
+
+</div>
+
+</div>
+
+<div class="bt-badge">
+
+${d.blood_type}
+
+</div>
+
+</div>
+
+
+<div style="margin-top:10px">
+
+<div class="donor-meta">
+
+Email :
+
+${d.email ?? "-"}
+
+</div>
+
+<div class="donor-meta">
+
+Phone :
+
+${d.phone ?? "-"}
+
+</div>
+
+<div class="donor-meta">
+
+Age :
+
+${d.age ?? "-"}
+
+</div>
+
+</div>
+
+
+<div style="margin-top:12px">
+
+Registered :
+
+${
+
+d.registered_on
+
+? new Date(d.registered_on)
+
+.toLocaleDateString()
+
+:"-"
+
+}
+
+</div>
 
 </div>
 
@@ -160,23 +256,65 @@ Delete
 
 
 
-async function deleteDonor(id){
+async function loadDonors(){
 
-if(!confirm("Delete donor?")) return;
+try{
 
-await fetch(`/api/donors/${id}`,{
+// ⭐⭐⭐ FIXED HERE ⭐⭐⭐
 
-method:"DELETE"
+const res=await fetch("/api/donors");
 
-});
+if(!res.ok){
 
-loadDonors();
+throw new Error("API Failed");
+
+}
+
+allDonors=await res.json();
+
+console.log(allDonors);
+
+renderDonors(allDonors);
+
+}
+
+catch(e){
+
+console.log(e);
+
+document.getElementById("donorCount")
+
+.textContent="Failed loading donors";
+
+}
 
 }
 
 
 
-document.getElementById("search")
+function filterByBlood(type){
+
+const filtered=
+
+type==="all"
+
+?allDonors
+
+:allDonors.filter(
+
+d=>d.blood_type===type
+
+);
+
+renderDonors(filtered);
+
+}
+
+
+
+document
+
+.getElementById("searchInput")
 
 .addEventListener("input",function(){
 
@@ -186,11 +324,25 @@ renderDonors(
 
 allDonors.filter(d=>
 
-d.name.toLowerCase().includes(q)
+(d.name??"")
+
+.toLowerCase()
+
+.includes(q)
 
 ||
 
-(d.email||"").toLowerCase().includes(q)
+(d.email??"")
+
+.toLowerCase()
+
+.includes(q)
+
+||
+
+(d.phone??"")
+
+.includes(q)
 
 )
 
@@ -199,37 +351,14 @@ d.name.toLowerCase().includes(q)
 });
 
 
+document.addEventListener(
 
-document.getElementById("blood")
+"DOMContentLoaded",
 
-.addEventListener("change",function(){
-
-const b=this.value;
-
-if(b==="all"){
-
-renderDonors(allDonors);
-
-return;
-
-}
-
-renderDonors(
-
-allDonors.filter(d=>
-
-d.blood_type===b)
+loadDonors
 
 );
 
-});
-
-
-
-loadDonors();
-
 </script>
 
-</body>
-
-</html>
+{% endblock %}
