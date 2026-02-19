@@ -134,7 +134,7 @@
 <script>
 async function loadInventory() {
     try {
-        const stats = await (await fetch('http://localhost:5000/api/dashboard/stats')).json();
+        const stats = await (await fetch('/api/dashboard/stats')).json();
 
         // Update top stats
         const s = id => document.getElementById(id);
