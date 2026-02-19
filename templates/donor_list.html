@@ -131,13 +131,15 @@ function renderDonors(donors) {
 
 async function loadDonors() {
     try {
-        const res = await fetch('http://localhost:5000/api/donors');
+        const res = await fetch('/api/donors');
         allDonors = await res.json();
         renderDonors(allDonors);
-    } catch {
-        document.getElementById('donorCount').textContent = 'Start Flask backend to see donors.';
+    } catch (e) {
+        console.error(e);
+        document.getElementById('donorCount').textContent = 'Failed to load donors.';
     }
 }
+
 
 function filterByBlood(type) {
     const filtered = type === 'all' ? allDonors : allDonors.filter(d => d.blood_type === type);
