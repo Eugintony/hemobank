@@ -1,2 +1,99 @@
-<div id="donorsList"></div>
-<script src="/static/js/main.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<title>Donor List</title>
+
+<style>
+
+body{
+font-family: Arial;
+padding:20px;
+background:#f4f6f8;
+}
+
+.donor-card{
+
+background:white;
+padding:15px;
+margin:10px 0;
+border-radius:8px;
+
+box-shadow:0px 2px 5px rgba(0,0,0,0.2);
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Registered Donors</h1>
+
+<div id="donorsList">
+
+Loading donors...
+
+</div>
+
+<script>
+
+async function loadDonors(){
+
+try{
+
+const response = await fetch("/api/donors");
+
+const donors = await response.json();
+
+const container = document.getElementById("donorsList");
+
+if(!donors.length){
+
+container.innerHTML="<p>No donors found</p>";
+
+return;
+
+}
+
+container.innerHTML = donors.map(donor =>`
+
+<div class="donor-card">
+
+<h3>${donor.name}</h3>
+
+<p><strong>Blood Type:</strong> ${donor.blood_type}</p>
+
+<p><strong>Age:</strong> ${donor.age}</p>
+
+<p><strong>Email:</strong> ${donor.email}</p>
+
+<p><strong>Phone:</strong> ${donor.phone}</p>
+
+</div>
+
+`).join("");
+
+}
+
+catch(error){
+
+console.log(error);
+
+document.getElementById("donorsList").innerHTML=
+
+"<p style='color:red'>Failed loading donors</p>";
+
+}
+
+}
+
+document.addEventListener("DOMContentLoaded",loadDonors);
+
+</script>
+
+</body>
+
+</html>
