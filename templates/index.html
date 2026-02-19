@@ -1,0 +1,630 @@
+{% extends "base.html" %}
+{% block title %}HemoBank — Blood Bank Management System{% endblock %}
+{% block page_title %}Welcome to HemoBank{% endblock %}
+{% block page_subtitle %}Blood Bank Management System{% endblock %}
+
+{% block content %}
+<style>
+.page-content { padding: 0 !important; }
+
+/* ── HERO ── */
+.hero {
+    min-height: 88vh;
+    background: linear-gradient(135deg, #1a0000 0%, #7f1d1d 50%, #450a0a 100%);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 80px;
+    position: relative;
+    overflow: hidden;
+}
+.hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+        radial-gradient(ellipse 600px 400px at 70% 50%, rgba(255,100,100,0.1), transparent 65%),
+        radial-gradient(ellipse 400px 300px at 15% 75%, rgba(255,50,50,0.08), transparent 60%);
+    pointer-events: none;
+}
+
+/* Floating drops */
+.drops-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.fdrop {
+    position: absolute;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    animation: floatUp linear infinite;
+    opacity: 0;
+}
+.fdrop:nth-child(1){width:18px;height:24px;left:8%;background:rgba(255,100,100,0.3);animation-duration:12s;animation-delay:0s;}
+.fdrop:nth-child(2){width:12px;height:16px;left:20%;background:rgba(255,80,80,0.25);animation-duration:15s;animation-delay:3s;}
+.fdrop:nth-child(3){width:22px;height:28px;left:75%;background:rgba(255,120,120,0.2);animation-duration:10s;animation-delay:6s;}
+.fdrop:nth-child(4){width:10px;height:13px;left:88%;background:rgba(255,90,90,0.3);animation-duration:14s;animation-delay:2s;}
+.fdrop:nth-child(5){width:16px;height:20px;left:50%;background:rgba(255,100,100,0.22);animation-duration:11s;animation-delay:8s;}
+.fdrop:nth-child(6){width:8px;height:11px;left:35%;background:rgba(255,150,150,0.28);animation-duration:16s;animation-delay:4s;}
+
+@keyframes floatUp {
+    0%   { transform:translateY(110vh) rotate(0deg);   opacity:0; }
+    10%  { opacity:0.8; }
+    90%  { opacity:0.5; }
+    100% { transform:translateY(-10vh) rotate(20deg);   opacity:0; }
+}
+
+/* Hero content */
+.hero-left { position:relative;z-index:2; }
+.hero-pill {
+    display:inline-flex; align-items:center; gap:8px;
+    background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2);
+    color:rgba(255,255,255,0.9); padding:7px 18px; border-radius:30px;
+    font-size:0.75rem; font-weight:700; letter-spacing:0.1em;
+    text-transform:uppercase; margin-bottom:28px;
+    opacity:0; animation:fadeUp 0.7s ease 0.2s forwards;
+}
+.hero-pill-dot { width:8px;height:8px;border-radius:50%;background:#f87171;animation:pulse 1.5s ease infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1);opacity:1;} 50%{transform:scale(1.6);opacity:0.6;} }
+
+.hero-title {
+    font-family:'Playfair Display',serif;
+    font-size:clamp(2.2rem,4vw,3.4rem);
+    font-weight:700; color:white; line-height:1.15; margin-bottom:22px;
+    opacity:0; animation:fadeUp 0.8s ease 0.4s forwards;
+}
+.hero-title em { color:#f87171; font-style:normal; }
+
+.hero-desc {
+    font-size:1.02rem; color:rgba(255,255,255,0.6); line-height:1.78;
+    max-width:500px; margin-bottom:38px;
+    opacity:0; animation:fadeUp 0.8s ease 0.6s forwards;
+}
+
+.hero-btns {
+    display:flex; gap:14px; align-items:center;
+    opacity:0; animation:fadeUp 0.8s ease 0.8s forwards;
+}
+.hbtn-primary {
+    display:inline-flex; align-items:center; gap:9px;
+    padding:13px 26px; background:white; color:#b91c1c;
+    border-radius:10px; text-decoration:none; font-weight:700; font-size:0.92rem;
+    transition:all 0.2s; box-shadow:0 4px 18px rgba(0,0,0,0.3);
+}
+.hbtn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(0,0,0,0.4); }
+.hbtn-secondary {
+    display:inline-flex; align-items:center; gap:8px;
+    padding:13px 22px; color:rgba(255,255,255,0.8);
+    border:1px solid rgba(255,255,255,0.25); border-radius:10px;
+    text-decoration:none; font-size:0.9rem; transition:all 0.2s;
+}
+.hbtn-secondary:hover { color:white; border-color:rgba(255,255,255,0.55); background:rgba(255,255,255,0.07); }
+
+.hero-counters {
+    display:flex; gap:36px; margin-top:48px;
+    padding-top:36px; border-top:1px solid rgba(255,255,255,0.1);
+    opacity:0; animation:fadeUp 0.8s ease 1s forwards;
+}
+.hc-val { display:block; font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; color:white; }
+.hc-lbl { font-size:0.76rem; color:rgba(255,255,255,0.45); display:block; margin-top:2px; }
+
+/* Hero right — blood drop visual */
+.hero-right {
+    display:flex; justify-content:flex-end; align-items:center;
+    position:relative; z-index:2;
+    opacity:0; animation:fadeLeft 0.9s ease 0.5s forwards;
+}
+.blood-visual {
+    width:400px;
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:20px; overflow:hidden;
+    box-shadow:0 30px 70px rgba(0,0,0,0.5);
+    backdrop-filter:blur(10px);
+}
+.bv-header {
+    padding:14px 18px;
+    background:rgba(255,255,255,0.06);
+    border-bottom:1px solid rgba(255,255,255,0.08);
+    display:flex; align-items:center; gap:7px;
+}
+.bv-dot { width:10px;height:10px;border-radius:50%; }
+.bv-dot.r{background:#f87171;} .bv-dot.a{background:#fbbf24;} .bv-dot.g{background:#4ade80;}
+.bv-win-title { font-size:0.78rem;color:rgba(255,255,255,0.4);margin-left:6px; }
+.bv-body { padding:20px; }
+.bv-label { font-size:0.67rem;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.3);margin-bottom:14px; }
+
+.fact-row {
+    display:flex; align-items:center; gap:12px;
+    padding:11px 0; border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.fact-row:last-child { border-bottom:none; }
+.fact-icon { width:34px;height:34px;border-radius:9px;background:rgba(248,113,113,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem; }
+.fact-text { font-size:0.8rem;color:rgba(255,255,255,0.65);line-height:1.45; }
+.fact-text strong { color:rgba(255,255,255,0.9); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from{opacity:0;transform:translateY(30px);} to{opacity:1;transform:translateY(0);} }
+@keyframes fadeLeft { from{opacity:0;transform:translateX(40px);} to{opacity:1;transform:translateX(0);} }
+.reveal { opacity:0;transform:translateY(40px);transition:opacity 0.75s ease,transform 0.75s ease; }
+.reveal.on { opacity:1;transform:translateY(0); }
+.d1{transition-delay:0.1s;} .d2{transition-delay:0.2s;} .d3{transition-delay:0.3s;}
+.d4{transition-delay:0.4s;} .d5{transition-delay:0.5s;}
+
+/* ── SECTION COMMON ── */
+.lp-section { padding:90px 80px; }
+.s-eye { display:block;font-size:0.72rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#b91c1c;margin-bottom:12px; }
+.s-title { font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3vw,2.5rem);font-weight:700;color:#0f1117;line-height:1.2;margin-bottom:16px; }
+.s-desc { font-size:0.98rem;color:#6b7280;line-height:1.76;max-width:580px; }
+
+/* ── BLOOD FACTS ── */
+.facts-section { background:#f8f9fc;padding:90px 80px; }
+.facts-header { text-align:center;max-width:620px;margin:0 auto 60px; }
+.facts-header .s-desc { margin:0 auto; }
+.facts-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:22px; }
+
+.fact-card {
+    background:white; border-radius:16px; padding:34px 28px;
+    border:1px solid #e8eaed; position:relative; overflow:hidden;
+    transition:all 0.3s ease;
+}
+.fact-card::before {
+    content:''; position:absolute; top:0;left:0;right:0;height:4px;
+    background:linear-gradient(90deg,#b91c1c,#f87171);
+    transform:scaleX(0); transform-origin:left; transition:transform 0.35s ease;
+}
+.fact-card:hover::before { transform:scaleX(1); }
+.fact-card:hover { transform:translateY(-6px);box-shadow:0 20px 50px rgba(0,0,0,0.1);border-color:rgba(185,28,28,0.2); }
+.fact-card-emoji { font-size:2.2rem;margin-bottom:18px;display:block; }
+.fact-card-num { font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:700;color:#b91c1c;display:block;line-height:1;margin-bottom:6px; }
+.fact-card-title { font-weight:700;font-size:1rem;color:#0f1117;margin-bottom:10px; }
+.fact-card-desc { font-size:0.85rem;color:#6b7280;line-height:1.68; }
+
+/* ── BLOOD TYPES SECTION ── */
+.types-section { padding:90px 80px;background:white; }
+.types-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:52px; }
+.type-card {
+    border-radius:16px; padding:28px 22px; text-align:center;
+    border:2px solid transparent; transition:all 0.25s ease; cursor:default;
+    position:relative; overflow:hidden;
+}
+.type-card::after { content:'';position:absolute;inset:0;background:inherit;opacity:0;transition:opacity 0.25s; }
+.type-card:hover { transform:translateY(-5px);box-shadow:0 16px 40px rgba(0,0,0,0.12); }
+.tc-a  { background:#fff5f5;border-color:#fecaca; }
+.tc-b  { background:#eff6ff;border-color:#bfdbfe; }
+.tc-ab { background:#faf5ff;border-color:#ddd6fe; }
+.tc-o  { background:#f0fdf4;border-color:#bbf7d0; }
+.tc-a:hover  { border-color:#f87171; }
+.tc-b:hover  { border-color:#60a5fa; }
+.tc-ab:hover { border-color:#a78bfa; }
+.tc-o:hover  { border-color:#34d399; }
+.type-letter { font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:700;display:block;margin-bottom:6px; }
+.tc-a  .type-letter { color:#b91c1c; }
+.tc-b  .type-letter { color:#1d4ed8; }
+.tc-ab .type-letter { color:#7c3aed; }
+.tc-o  .type-letter { color:#059669; }
+.type-name { font-size:0.8rem;font-weight:700;color:#374151;margin-bottom:14px;display:block; }
+.type-can-donate { font-size:0.72rem;color:#9ca3af;margin-bottom:6px;display:block; }
+.type-donate-to { font-size:0.8rem;font-weight:600;color:#374151; }
+.type-badge { display:inline-block;margin-top:12px;padding:4px 12px;border-radius:20px;font-size:0.71rem;font-weight:700; }
+.tb-universal { background:#dcfce7;color:#166534; }
+.tb-rare      { background:#fef9c3;color:#92400e; }
+.tb-common    { background:#dbeafe;color:#1e40af; }
+.tb-special   { background:#ede9fe;color:#6d28d9; }
+
+/* ── WHY DONATE ── */
+.why-section { background:linear-gradient(135deg,#1a0000,#7f1d1d);padding:90px 80px;position:relative;overflow:hidden; }
+.why-section::before { content:'';position:absolute;inset:0;background:radial-gradient(ellipse 700px 500px at 70% 50%,rgba(255,100,100,0.07),transparent 65%);pointer-events:none; }
+.why-grid { display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center;position:relative;z-index:1; }
+.why-left .s-title { color:white; }
+.why-left .s-desc  { color:rgba(255,255,255,0.55);max-width:100%; }
+.why-reasons { display:flex;flex-direction:column;gap:18px;margin-top:32px; }
+.why-reason {
+    display:flex;gap:16px;align-items:flex-start;
+    padding:18px;border-radius:12px;
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.08);
+    transition:background 0.2s;
+}
+.why-reason:hover { background:rgba(255,255,255,0.09); }
+.why-reason-num { width:34px;height:34px;border-radius:50%;background:#b91c1c;color:white;font-weight:700;font-size:0.88rem;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+.why-reason-title { font-weight:700;color:white;font-size:0.9rem;margin-bottom:5px; }
+.why-reason-desc  { font-size:0.8rem;color:rgba(255,255,255,0.5);line-height:1.6; }
+
+.why-right-cards { display:flex;flex-direction:column;gap:16px; }
+.why-stat-card {
+    background:rgba(255,255,255,0.05);
+    border:1px solid rgba(255,255,255,0.09);
+    border-radius:14px; padding:22px 24px;
+    display:flex;align-items:center;gap:18px;
+}
+.wsc-icon { width:48px;height:48px;border-radius:12px;background:rgba(248,113,113,0.15);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0; }
+.wsc-num { font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:white;display:block;line-height:1; }
+.wsc-lbl { font-size:0.78rem;color:rgba(255,255,255,0.45);margin-top:3px; }
+
+/* ── ELIGIBILITY ── */
+.elig-section { padding:90px 80px;background:#f8f9fc; }
+.elig-grid { display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:start;margin-top:50px; }
+.elig-list { display:flex;flex-direction:column;gap:14px; }
+.elig-item {
+    display:flex;gap:16px;align-items:flex-start;
+    padding:18px 20px;background:white;border-radius:12px;
+    border:1px solid #e8eaed;transition:all 0.2s;
+}
+.elig-item:hover { border-color:#fecaca;transform:translateX(4px); }
+.elig-check { width:30px;height:30px;border-radius:50%;background:#dcfce7;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+.elig-check svg { color:#166534; }
+.elig-cross { width:30px;height:30px;border-radius:50%;background:#fee2e2;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+.elig-cross svg { color:#991b1b; }
+.elig-item-title { font-weight:600;color:#0f1117;font-size:0.9rem;margin-bottom:3px; }
+.elig-item-desc  { font-size:0.8rem;color:#9ca3af;line-height:1.5; }
+
+.elig-process { display:flex;flex-direction:column;gap:0; }
+.proc-step { display:flex;gap:18px;padding-bottom:28px;position:relative; }
+.proc-step:last-child { padding-bottom:0; }
+.proc-left { display:flex;flex-direction:column;align-items:center;flex-shrink:0; }
+.proc-num { width:40px;height:40px;border-radius:50%;background:#b91c1c;color:white;font-weight:700;font-size:0.9rem;display:flex;align-items:center;justify-content:center;z-index:1; }
+.proc-line { width:2px;flex:1;background:linear-gradient(to bottom,#b91c1c,rgba(185,28,28,0.1));margin-top:8px; }
+.proc-step:last-child .proc-line { display:none; }
+.proc-body { padding-top:8px; }
+.proc-title { font-weight:700;font-size:0.95rem;color:#0f1117;margin-bottom:6px; }
+.proc-desc  { font-size:0.83rem;color:#6b7280;line-height:1.65; }
+
+/* ── CTA ── */
+.cta-section { padding:90px 80px;background:white;text-align:center; }
+.cta-inner { max-width:600px;margin:0 auto; }
+.cta-section .s-title { color:#0f1117;margin-bottom:14px; }
+.cta-btns { display:flex;gap:14px;justify-content:center;margin-top:36px;flex-wrap:wrap; }
+
+/* ── FOOTER ── */
+.lp-footer {
+    background:linear-gradient(135deg,#1a0000,#7f1d1d);
+    padding:36px 80px;
+    display:flex;align-items:center;justify-content:space-between;
+    border-top:1px solid rgba(255,255,255,0.08);
+}
+.footer-brand { display:flex;align-items:center;gap:12px; }
+.footer-logo-name { font-family:'Playfair Display',serif;color:white;font-size:1.1rem;display:block; }
+.footer-logo-sub  { font-size:0.72rem;color:rgba(255,255,255,0.35);display:block;margin-top:2px; }
+.footer-links { display:flex;gap:22px; }
+.footer-links a { font-size:0.8rem;color:rgba(255,255,255,0.4);text-decoration:none;transition:color 0.2s; }
+.footer-links a:hover { color:white; }
+.footer-copy { font-size:0.75rem;color:rgba(255,255,255,0.22); }
+
+/* ── RESPONSIVE ── */
+@media(max-width:1100px){
+    .hero,.lp-section,.facts-section,.types-section,.why-section,.elig-section,.cta-section,.lp-footer{padding-left:40px;padding-right:40px;}
+    .hero{grid-template-columns:1fr;min-height:auto;padding-top:60px;padding-bottom:60px;}
+    .hero-right{display:none;}
+    .facts-grid{grid-template-columns:repeat(2,1fr);}
+    .types-grid{grid-template-columns:repeat(2,1fr);}
+    .why-grid,.elig-grid{grid-template-columns:1fr;gap:40px;}
+    .lp-footer{flex-direction:column;gap:20px;text-align:center;padding:32px 40px;}
+}
+@media(max-width:640px){
+    .hero,.facts-section,.types-section,.why-section,.elig-section,.cta-section,.lp-footer{padding-left:20px;padding-right:20px;}
+    .facts-grid{grid-template-columns:1fr;}
+    .types-grid{grid-template-columns:1fr 1fr;}
+    .hero-counters{flex-wrap:wrap;gap:20px;}
+    .hero-btns{flex-direction:column;align-items:flex-start;}
+}
+</style>
+
+<!-- ══════ HERO ══════ -->
+<section class="hero">
+    <div class="drops-bg">
+        <div class="fdrop"></div><div class="fdrop"></div>
+        <div class="fdrop"></div><div class="fdrop"></div>
+        <div class="fdrop"></div><div class="fdrop"></div>
+    </div>
+
+    <div class="hero-left">
+        <div class="hero-pill">
+            <div class="hero-pill-dot"></div>
+            Every Drop Saves a Life
+        </div>
+        <h1 class="hero-title">
+            Blood is the <em>Gift of Life</em><br>
+            — Understand Its<br>
+            Importance
+        </h1>
+        <p class="hero-desc">
+            Blood cannot be manufactured. It can only come from generous donors. Every 2 seconds, someone in the world needs blood. Learn about blood, its components, and why blood donation is one of the most powerful acts of human kindness.
+        </p>
+        <div class="hero-btns">
+            <a href="/donors/register" class="hbtn-primary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><line x1="12" y1="17" x2="12" y2="23"/><line x1="9" y1="20" x2="15" y2="20"/></svg>
+                Register as Donor
+            </a>
+            <a href="/inventory" class="hbtn-secondary">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                View Inventory
+            </a>
+        </div>
+        <div class="hero-counters">
+            <div><span class="hc-val" data-count="118">0</span><span class="hc-lbl">Million Donations / Year</span></div>
+            <div><span class="hc-val" data-count="38">0</span><span class="hc-lbl">% Eligible Who Donate</span></div>
+            <div><span class="hc-val" data-count="3">0</span><span class="hc-lbl">Lives Saved Per Donation</span></div>
+        </div>
+    </div>
+
+    <div class="hero-right">
+        <div class="blood-visual">
+            <div class="bv-header">
+                <div class="bv-dot r"></div><div class="bv-dot a"></div><div class="bv-dot g"></div>
+                <span class="bv-win-title">Blood Facts — Quick Reference</span>
+            </div>
+            <div class="bv-body">
+                <div class="bv-label">Did You Know?</div>
+                <div class="fact-row"><div class="fact-icon">🩸</div><div class="fact-text"><strong>Human blood</strong> makes up about 7–8% of your total body weight.</div></div>
+                <div class="fact-row"><div class="fact-icon">❤️</div><div class="fact-text">An adult has approximately <strong>4.7 to 5.5 litres</strong> of blood circulating in the body.</div></div>
+                <div class="fact-row"><div class="fact-icon">⏱️</div><div class="fact-text">Blood travels through <strong>96,000 km</strong> of blood vessels in your body every day.</div></div>
+                <div class="fact-row"><div class="fact-icon">🔴</div><div class="fact-text">Red blood cells live for about <strong>120 days</strong> before being replaced by the bone marrow.</div></div>
+                <div class="fact-row"><div class="fact-icon">💊</div><div class="fact-text">Donated blood is separated into <strong>red cells, plasma, and platelets</strong> to help multiple patients.</div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════ BLOOD FACTS ══════ -->
+<section class="facts-section">
+    <div class="facts-header reveal">
+        <span class="s-eye">Blood Facts</span>
+        <h2 class="s-title">Incredible Facts About Human Blood</h2>
+        <p class="s-desc">Blood is far more complex and vital than most people realize. Here are some remarkable facts about this life-sustaining fluid.</p>
+    </div>
+    <div class="facts-grid">
+        <div class="fact-card reveal d1">
+            <span class="fact-card-emoji">🔴</span>
+            <span class="fact-card-num">25 Trillion</span>
+            <div class="fact-card-title">Red Blood Cells in Your Body</div>
+            <p class="fact-card-desc">Your body contains roughly 25 trillion red blood cells (erythrocytes), each carrying hemoglobin to transport oxygen from lungs to every tissue and organ.</p>
+        </div>
+        <div class="fact-card reveal d2">
+            <span class="fact-card-emoji">💛</span>
+            <span class="fact-card-num">55%</span>
+            <div class="fact-card-title">Blood is Mostly Plasma</div>
+            <p class="fact-card-desc">Over half of your blood is plasma — a yellowish liquid made of 92% water. It carries proteins, hormones, nutrients, and waste products throughout the body.</p>
+        </div>
+        <div class="fact-card reveal d3">
+            <span class="fact-card-emoji">⚡</span>
+            <span class="fact-card-num">2 Seconds</span>
+            <div class="fact-card-title">Someone Needs Blood</div>
+            <p class="fact-card-desc">Every 2 seconds somewhere in the world, a patient needs blood — whether due to surgery, cancer treatment, trauma, or chronic illness like sickle cell disease.</p>
+        </div>
+        <div class="fact-card reveal d1">
+            <span class="fact-card-emoji">🏥</span>
+            <span class="fact-card-num">35 Days</span>
+            <div class="fact-card-title">Whole Blood Shelf Life</div>
+            <p class="fact-card-desc">Donated whole blood only lasts 35 days when refrigerated. Platelets expire in just 5–7 days. This is why continuous donations are critical to maintain supply.</p>
+        </div>
+        <div class="fact-card reveal d2">
+            <span class="fact-card-emoji">🧬</span>
+            <span class="fact-card-num">4 Types</span>
+            <div class="fact-card-title">Main Blood Group System</div>
+            <p class="fact-card-desc">The ABO blood group system categorises blood into 4 types: A, B, AB, and O — determined by antigens on red blood cells. Combined with Rh factor, this gives 8 types.</p>
+        </div>
+        <div class="fact-card reveal d3">
+            <span class="fact-card-emoji">🌍</span>
+            <span class="fact-card-num">O+</span>
+            <div class="fact-card-title">Most Common Blood Type</div>
+            <p class="fact-card-desc">O+ is the most common blood type, found in about 38% of people globally. O- is the universal donor type — it can be given to patients of any blood type in emergencies.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ══════ BLOOD TYPES ══════ -->
+<section class="types-section">
+    <div class="reveal" style="text-align:center;max-width:640px;margin:0 auto;">
+        <span class="s-eye">Blood Types</span>
+        <h2 class="s-title">Understanding Blood Groups</h2>
+        <p class="s-desc" style="margin:0 auto;">The ABO and Rh systems determine compatibility for transfusions. Knowing your blood type can save your life — and someone else's.</p>
+    </div>
+    <div class="types-grid">
+        <div class="type-card tc-a reveal d1">
+            <span class="type-letter">A</span>
+            <span class="type-name">Type A (A+, A-)</span>
+            <span class="type-can-donate">Can donate red cells to:</span>
+            <span class="type-donate-to">A and AB types</span>
+            <span class="type-badge tb-common">~34% of people</span>
+        </div>
+        <div class="type-card tc-b reveal d2">
+            <span class="type-letter">B</span>
+            <span class="type-name">Type B (B+, B-)</span>
+            <span class="type-can-donate">Can donate red cells to:</span>
+            <span class="type-donate-to">B and AB types</span>
+            <span class="type-badge tb-common">~9% of people</span>
+        </div>
+        <div class="type-card tc-ab reveal d3">
+            <span class="type-letter">AB</span>
+            <span class="type-name">Type AB (AB+, AB-)</span>
+            <span class="type-can-donate">Universal Recipient</span>
+            <span class="type-donate-to">Receives from all types</span>
+            <span class="type-badge tb-special">~3% — Rarest</span>
+        </div>
+        <div class="type-card tc-o reveal d4">
+            <span class="type-letter">O</span>
+            <span class="type-name">Type O (O+, O-)</span>
+            <span class="type-can-donate">Universal Donor (O-)</span>
+            <span class="type-donate-to">Donates to all types</span>
+            <span class="type-badge tb-universal">~44% — Most Common</span>
+        </div>
+    </div>
+
+    <!-- Rh factor info -->
+    <div style="margin-top:32px;background:#fff5f5;border:1px solid #fecaca;border-radius:16px;padding:28px 32px;display:flex;gap:20px;align-items:flex-start;" class="reveal">
+        <div style="width:44px;height:44px;background:#b91c1c;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.3rem;">🧪</div>
+        <div>
+            <h3 style="font-family:'Playfair Display',serif;font-size:1.05rem;color:#0f1117;margin-bottom:8px;">What is the Rh Factor?</h3>
+            <p style="font-size:0.87rem;color:#6b7280;line-height:1.7;">The Rh factor (+ or -) refers to whether your red blood cells carry a specific protein called the Rh antigen. If you have it, you're Rh positive (+). If not, you're Rh negative (-). Rh negative blood (especially O-) is critical in emergencies because it can be given to <strong>any patient</strong> before their blood type is confirmed.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ══════ WHY DONATE ══════ -->
+<section class="why-section">
+    <div class="why-grid">
+        <div class="why-left reveal">
+            <span class="s-eye" style="color:#f87171;">Why Donate Blood?</span>
+            <h2 class="s-title">One Donation Can Save Up to Three Lives</h2>
+            <p class="s-desc">Blood cannot be made in a lab. The only source is human donors. Here is why your donation matters more than you know.</p>
+            <div class="why-reasons">
+                <div class="why-reason">
+                    <div class="why-reason-num">1</div>
+                    <div><div class="why-reason-title">Accident & Trauma Victims</div><div class="why-reason-desc">Patients in accidents can require up to 100 units of blood. Emergency supply depends entirely on voluntary donors.</div></div>
+                </div>
+                <div class="why-reason">
+                    <div class="why-reason-num">2</div>
+                    <div><div class="why-reason-title">Cancer Treatment</div><div class="why-reason-desc">Cancer patients undergoing chemotherapy often need platelet and red blood cell transfusions weekly to survive treatment.</div></div>
+                </div>
+                <div class="why-reason">
+                    <div class="why-reason-num">3</div>
+                    <div><div class="why-reason-title">Surgical Procedures</div><div class="why-reason-desc">Open heart surgeries, organ transplants, and major operations often require multiple units of blood during the procedure.</div></div>
+                </div>
+                <div class="why-reason">
+                    <div class="why-reason-num">4</div>
+                    <div><div class="why-reason-title">Childbirth Complications</div><div class="why-reason-desc">Postpartum haemorrhage is a leading cause of maternal death. Blood transfusions save thousands of mothers every year.</div></div>
+                </div>
+            </div>
+        </div>
+        <div class="why-right-cards reveal d2">
+            <div class="why-stat-card"><div class="wsc-icon">🩸</div><div><span class="wsc-num">118M+</span><span class="wsc-lbl">Blood donations collected globally per year</span></div></div>
+            <div class="why-stat-card"><div class="wsc-icon">⏱️</div><div><span class="wsc-num">10 Min</span><span class="wsc-lbl">Average time for the actual blood draw</span></div></div>
+            <div class="why-stat-card"><div class="wsc-icon">💪</div><div><span class="wsc-num">48 Hrs</span><span class="wsc-lbl">Time for your body to replenish plasma</span></div></div>
+            <div class="why-stat-card"><div class="wsc-icon">🔄</div><div><span class="wsc-num">90 Days</span><span class="wsc-lbl">Minimum gap required between whole blood donations</span></div></div>
+            <div class="why-stat-card"><div class="wsc-icon">❤️</div><div><span class="wsc-num">3 Lives</span><span class="wsc-lbl">Saved with every single blood donation on average</span></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════ ELIGIBILITY & PROCESS ══════ -->
+<section class="elig-section">
+    <div class="reveal" style="text-align:center;max-width:640px;margin:0 auto 50px;">
+        <span class="s-eye">Eligibility & Process</span>
+        <h2 class="s-title">Who Can Donate Blood?</h2>
+        <p class="s-desc" style="margin:0 auto;">Most healthy adults are eligible to donate. Here are the key requirements and what to expect during the donation process.</p>
+    </div>
+    <div class="elig-grid">
+        <div>
+            <h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;color:#0f1117;margin-bottom:22px;">Requirements</h3>
+            <div class="elig-list">
+                <div class="elig-item reveal">
+                    <div class="elig-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                    <div><div class="elig-item-title">Age 18–65 years</div><div class="elig-item-desc">First-time donors above 60 require physician approval in most blood banks.</div></div>
+                </div>
+                <div class="elig-item reveal d1">
+                    <div class="elig-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                    <div><div class="elig-item-title">Weight at least 50 kg</div><div class="elig-item-desc">Minimum body weight ensures the donor is not adversely affected by blood volume reduction.</div></div>
+                </div>
+                <div class="elig-item reveal d2">
+                    <div class="elig-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                    <div><div class="elig-item-title">Hemoglobin ≥ 12.5 g/dL</div><div class="elig-item-desc">Ensures you have enough healthy red blood cells to donate without becoming anaemic.</div></div>
+                </div>
+                <div class="elig-item reveal d3">
+                    <div class="elig-check"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>
+                    <div><div class="elig-item-title">No donation in last 90 days</div><div class="elig-item-desc">Whole blood donors must wait 90 days (3 months) between donations to allow full recovery.</div></div>
+                </div>
+                <div class="elig-item reveal d4">
+                    <div class="elig-cross"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+                    <div><div class="elig-item-title">Not eligible if:</div><div class="elig-item-desc">Active infection, recent tattoo (within 6 months), certain medications, pregnancy, or recent surgery.</div></div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <h3 style="font-family:'Playfair Display',serif;font-size:1.1rem;color:#0f1117;margin-bottom:22px;">Donation Process</h3>
+            <div class="elig-process reveal d1">
+                <div class="proc-step">
+                    <div class="proc-left"><div class="proc-num">1</div><div class="proc-line"></div></div>
+                    <div class="proc-body"><div class="proc-title">Registration & Health Check</div><div class="proc-desc">Fill in a donor form and have a brief health screening including blood pressure, pulse, and hemoglobin test.</div></div>
+                </div>
+                <div class="proc-step">
+                    <div class="proc-left"><div class="proc-num">2</div><div class="proc-line"></div></div>
+                    <div class="proc-body"><div class="proc-title">Blood Donation (8–10 min)</div><div class="proc-desc">A sterile needle is inserted and approximately 450ml of blood is collected — less than 10% of your total blood volume.</div></div>
+                </div>
+                <div class="proc-step">
+                    <div class="proc-left"><div class="proc-num">3</div><div class="proc-line"></div></div>
+                    <div class="proc-body"><div class="proc-title">Testing & Processing</div><div class="proc-desc">Donated blood is tested for blood type and screened for infections. It's then separated into red cells, plasma, and platelets.</div></div>
+                </div>
+                <div class="proc-step">
+                    <div class="proc-left"><div class="proc-num">4</div></div>
+                    <div class="proc-body"><div class="proc-title">Rest & Refreshment</div><div class="proc-desc">You rest for 10–15 minutes and have a snack. Your plasma replenishes within 48 hours, red cells within 4–6 weeks.</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════ CTA ══════ -->
+<section class="cta-section">
+    <div class="cta-inner reveal">
+        <span class="s-eye">Take Action</span>
+        <h2 class="s-title">Ready to Save a Life Today?</h2>
+        <p class="s-desc" style="margin:0 auto 0;">Register as a blood donor or record a donation now. Every unit of blood you give has the potential to save up to three lives.</p>
+        <div class="cta-btns">
+            <a href="/donors/register" style="display:inline-flex;align-items:center;gap:9px;padding:13px 28px;background:#b91c1c;color:white;border-radius:10px;text-decoration:none;font-weight:700;font-size:0.92rem;box-shadow:0 4px 16px rgba(185,28,28,0.3);transition:all 0.2s;"
+               onmouseover="this.style.background='#991b1b';this.style.transform='translateY(-2px)'"
+               onmouseout="this.style.background='#b91c1c';this.style.transform='none'">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Register as Donor
+            </a>
+            <a href="/donations/record" style="display:inline-flex;align-items:center;gap:9px;padding:13px 28px;background:#0f1117;color:white;border-radius:10px;text-decoration:none;font-weight:700;font-size:0.92rem;transition:all 0.2s;"
+               onmouseover="this.style.background='#1e2130';this.style.transform='translateY(-2px)'"
+               onmouseout="this.style.background='#0f1117';this.style.transform='none'">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                Record a Donation
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ══════ FOOTER ══════ -->
+<footer class="lp-footer">
+    <div class="footer-brand">
+        <svg width="26" height="26" viewBox="0 0 32 32" fill="none"><path d="M16 2C16 2 6 12 6 19a10 10 0 0 0 20 0C26 12 16 2 16 2Z" fill="#f87171"/><path d="M16 10C16 10 10 16.5 10 20.5a6 6 0 0 0 12 0C22 16.5 16 10 16 10Z" fill="white" opacity="0.3"/></svg>
+        <div><span class="footer-logo-name">HemoBank</span><span class="footer-logo-sub">Blood Bank Management System</span></div>
+    </div>
+    <div class="footer-links">
+        <a href="/donors/register">Register Donor</a>
+        <a href="/donors">Donors</a>
+        <a href="/donations/record">Record Donation</a>
+        <a href="/inventory">Inventory</a>
+    </div>
+    <div class="footer-copy">© 2026 HemoBank · Saving Lives Together</div>
+</footer>
+
+<script>
+// ── Scroll reveal ──────────────────────────────
+const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('on');
+
+        // Count-up numbers in hero
+        e.target.querySelectorAll('[data-count]').forEach(el => {
+            if (el.dataset.done) return;
+            el.dataset.done = '1';
+            const target = parseInt(el.dataset.count);
+            const suffix = el.dataset.suffix || '';
+            let cur = 0;
+            const step = target / 60;
+            const t = setInterval(() => {
+                cur += step;
+                if (cur >= target) { el.textContent = target + suffix; clearInterval(t); }
+                else el.textContent = Math.floor(cur) + suffix;
+            }, 22);
+        });
+    });
+}, { threshold: 0.14 });
+
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// ── Hero counter animation on load ────────────
+setTimeout(() => {
+    document.querySelectorAll('.hc-val[data-count]').forEach(el => {
+        const target = parseInt(el.dataset.count);
+        let cur = 0;
+        const step = target / 55;
+        const t = setInterval(() => {
+            cur += step;
+            if (cur >= target) { el.textContent = target; clearInterval(t); }
+            else el.textContent = Math.floor(cur);
+        }, 25);
+    });
+}, 1100);
+</script>
+{% endblock %}

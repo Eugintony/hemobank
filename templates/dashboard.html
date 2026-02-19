@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — HemoBank{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block page_subtitle %}Real-time blood bank overview{% endblock %}
+
+{% block content %}
+
+<!-- Stats Row -->
+<div class="stats-row">
+    <div class="stat-card sc-red">
+        <div class="stat-ico">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+        </div>
+        <div>
+            <span class="stat-val" id="totalDonors">—</span>
+            <span class="stat-lbl">Total Donors</span>
+        </div>
+    </div>
+    <div class="stat-card sc-blue">
+        <div class="stat-ico">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+        </div>
+        <div>
+            <span class="stat-val" id="totalDonations">—</span>
+            <span class="stat-lbl">Total Donations</span>
+        </div>
+    </div>
+    <div class="stat-card sc-green">
+        <div class="stat-ico">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+        </div>
+        <div>
+            <span class="stat-val" id="availableUnits">—</span>
+            <span class="stat-lbl">Available Units</span>
+        </div>
+    </div>
+    <div class="stat-card sc-amber">
+        <div class="stat-ico">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+        </div>
+        <div>
+            <span class="stat-val" id="expiringSoon">—</span>
+            <span class="stat-lbl">Expiring Soon</span>
+        </div>
+    </div>
+</div>
+
+<!-- Content Grid -->
+<div class="content-grid">
+    <!-- Blood Availability Panel -->
+    <div class="panel">
+        <div class="panel-header">
+            <h2 class="panel-title">Blood Type Availability</h2>
+            <span class="panel-live">Live</span>
+        </div>
+        <div class="blood-avail-grid" id="bloodGrid">
+            {% for bt in ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] %}
+            <div class="bav-cell" data-type="{{ bt }}">
+                <span class="bav-type">{{ bt }}</span>
+                <span class="bav-units">—</span>
+                <span class="bav-label">units</span>
+                <div class="bav-bar"><div class="bav-fill" style="width:0%"></div></div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Quick Actions Panel -->
+    <div class="panel">
+        <div class="panel-header">
+            <h2 class="panel-title">Quick Actions</h2>
+        </div>
+        <div class="quick-list">
+            <a href="/donors/register" class="quick-item">
+                <div class="qi-icon qi-red">
+                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                        <line x1="12" y1="17" x2="12" y2="23"/>
+                        <line x1="9" y1="20" x2="15" y2="20"/>
+                    </svg>
+                </div>
+                <div class="qi-body">
+                    <span class="qi-title">Register Donor</span>
+                    <span class="qi-desc">Add a new blood donor</span>
+                </div>
+                <svg class="qi-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"/>
+                </svg>
+            </a>
+            <a href="/donations/record" class="quick-item">
+                <div class="qi-icon qi-blue">
+                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                    </svg>
+                </div>
+                <div class="qi-body">
+                    <span class="qi-title">Record Donation</span>
+                    <span class="qi-desc">Log a new donation event</span>
+                </div>
+                <svg class="qi-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"/>
+                </svg>
+            </a>
+            <a href="/inventory" class="quick-item">
+                <div class="qi-icon qi-green">
+                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="8" y1="6" x2="21" y2="6"/>
+                        <line x1="8" y1="12" x2="21" y2="12"/>
+                        <line x1="8" y1="18" x2="21" y2="18"/>
+                        <line x1="3" y1="6" x2="3.01" y2="6"/>
+                        <line x1="3" y1="12" x2="3.01" y2="12"/>
+                        <line x1="3" y1="18" x2="3.01" y2="18"/>
+                    </svg>
+                </div>
+                <div class="qi-body">
+                    <span class="qi-title">View Inventory</span>
+                    <span class="qi-desc">Check current blood stock</span>
+                </div>
+                <svg class="qi-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"/>
+                </svg>
+            </a>
+            <a href="/donors" class="quick-item">
+                <div class="qi-icon qi-purple">
+                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
+                <div class="qi-body">
+                    <span class="qi-title">View All Donors</span>
+                    <span class="qi-desc">Manage the donor list</span>
+                </div>
+                <svg class="qi-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
