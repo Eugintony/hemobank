@@ -5,14 +5,14 @@ from flask_cors import CORS
 from config import DevelopmentConfig, TestingConfig, ProductionConfig
 from models import db
 from routes import register_routes
-from database import init_db, seed_sample_data, get_db_stats
+from database import get_db_stats
 
 load_dotenv()
 
 def create_app(config_name=None):
     app = Flask(__name__)
 
-    # Auto-detect production on Render
+    # Detect environment
     if os.getenv("RENDER"):
         config = ProductionConfig()
     elif config_name == "testing":
@@ -22,14 +22,9 @@ def create_app(config_name=None):
 
     app.config.from_object(config)
 
-    # Allow all origins (safe for your college project)
     CORS(app)
 
     db.init_app(app)
-
-    with app.app_context():
-        init_db(app)
-        seed_sample_data(app)
 
     register_routes(app)
 
@@ -75,8 +70,3 @@ def create_app(config_name=None):
         return jsonify({"error": "Resource not found"}), 404
 
     return app
-
-
-if __name__ == "__main__":
-    app = create_app()
-    app.run(debug=True)
