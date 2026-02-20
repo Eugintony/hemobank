@@ -30,12 +30,12 @@
                     <svg style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#9ca3af;" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
                     </svg>
-                    <input type="number" name="donor_id" required placeholder="Search donor by ID..."
+                    <input type="number" name="donor_id" required placeholder="Enter donor ID"
                         style="width:100%;padding:13px 16px 13px 40px;border:1.5px solid #e8eaed;border-radius:10px;font-size:0.9rem;font-family:'DM Sans',sans-serif;color:#0f1117;background:#fafbff;"
                         onfocus="this.style.borderColor='#e63946';this.style.boxShadow='0 0 0 3px rgba(230,57,70,0.09)'"
                         onblur="this.style.borderColor='#e8eaed';this.style.boxShadow='none'">
                 </div>
-                <p style="font-size:0.75rem;color:#9ca3af;margin-top:6px;">Enter the donor's registered ID number</p>
+                <p style="font-size:0.75rem;color:#9ca3af;margin-top:6px;">Use the donor ID from the Donor List page.</p>
             </div>
 
             <!-- Donation Details -->
@@ -88,7 +88,7 @@
                 <div>
                     <p style="font-size:0.85rem;font-weight:700;color:#92400e;margin-bottom:3px;">⚠ 90-Day Donation Rule</p>
                     <p style="font-size:0.8rem;color:#78350f;">
-                        Donors must wait at least <strong>90 days</strong> between donations. This is automatically enforced by the database.
+                        Donors must wait at least <strong>90 days</strong> between donations. This is automatically enforced by the system.
                         Blood expires in <strong>35 days</strong>.
                     </p>
                 </div>
@@ -145,7 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
     msgBox.textContent = "Recording donation...";
 
     try {
-      const res = await fetch("/api/donations", {
+      const res = await fetch("/api/donations/record", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
