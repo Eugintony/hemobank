@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 
 bp = Blueprint("donations", __name__, url_prefix="/api/donations")
 
+
 @bp.route("", methods=["GET"])
 def get_all_donations():
     """Get all donations."""
@@ -103,8 +104,8 @@ def record_donation():
         db.session.add(new_inventory)
 
         # Update donor's last donation date
-            donor.last_donation = donation_date
-            donor.updated_at = datetime.utcnow()
+        donor.last_donation = donation_date
+        donor.updated_at = datetime.utcnow()
 
         db.session.commit()
 
@@ -133,4 +134,3 @@ def delete_donation(donation_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
-
