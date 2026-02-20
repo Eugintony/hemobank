@@ -102,10 +102,9 @@ def record_donation():
 
         db.session.add(new_inventory)
 
-        # Update donor's last donation date and stats
-        donor.last_donation = donation_date
-        donor.total_donations = (donor.total_donations or 0) + 1
-        donor.updated_at = datetime.utcnow()
+        # Update donor's last donation date
+            donor.last_donation = donation_date
+            donor.updated_at = datetime.utcnow()
 
         db.session.commit()
 
@@ -134,3 +133,4 @@ def delete_donation(donation_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
