@@ -141,4 +141,57 @@
         {% endfor %}
     </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("donorForm");
+  const msgBox = document.getElementById("message");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    const payload = {
+      name: formData.get("name"),
+      age: Number(formData.get("age")),
+      email: formData.get("email"),
+      phone: formData.get("phone"),
+      blood_type: formData.get("blood_type"),
+      emergency_contact: formData.get("emergency_contact"),
+      address: formData.get("address"),
+    };
+
+    msgBox.classList.remove("hidden", "success", "error");
+    msgBox.textContent = "Registering donor...";
+
+    try {
+      const res = await fetch("/api/donors/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(data.error || data.message || "Failed to register donor");
+      }
+
+      msgBox.classList.add("success");
+      msgBox.textContent = data.message || "Donor registered successfully";
+
+      form.reset();
+      setTimeout(() => {
+        window.location.href = "/donors";
+      }, 1200);
+    } catch (err) {
+      console.error(err);
+      msgBox.classList.add("error");
+      msgBox.textContent = err.message || "Error registering donor";
+    }
+  });
+});
+</script>
 {% endblock %}
