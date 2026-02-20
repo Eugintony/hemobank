@@ -10,7 +10,10 @@
         <!-- Header -->
         <div style="padding:28px 32px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;gap:18px;">
             <div style="width:52px;height:52px;background:#fef2f2;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                <svg width="26" height="26" viewBox="0 0 32 32" fill="none"><path d="M16 2C16 2 6 12 6 19a10 10 0 0 0 20 0C26 12 16 2 16 2Z" fill="#e63946"/><path d="M16 10C16 10 10 16.5 10 20.5a6 6 0 0 0 12 0C22 16.5 16 10 16 10Z" fill="white" opacity="0.3"/></svg>
+                <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
+                    <path d="M16 2C16 2 6 12 6 19a10 10 0 0 0 20 0C26 12 16 2 16 2Z" fill="#e63946"/>
+                    <path d="M16 10C16 10 10 16.5 10 20.5a6 6 0 0 0 12 0C22 16.5 16 10 16 10Z" fill="white" opacity="0.3"/>
+                </svg>
             </div>
             <div>
                 <h2 style="font-family:'Playfair Display',serif;font-size:1.3rem;color:#0f1117;margin-bottom:3px;">Record Blood Donation</h2>
@@ -24,7 +27,9 @@
             <div style="margin-bottom:28px;">
                 <h3 style="font-size:0.78rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#e63946;margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid #fef2f2;">Select Donor</h3>
                 <div style="position:relative;">
-                    <svg style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#9ca3af;" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <svg style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#9ca3af;" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
                     <input type="number" name="donor_id" required placeholder="Search donor by ID..."
                         style="width:100%;padding:13px 16px 13px 40px;border:1.5px solid #e8eaed;border-radius:10px;font-size:0.9rem;font-family:'DM Sans',sans-serif;color:#0f1117;background:#fafbff;"
                         onfocus="this.style.borderColor='#e63946';this.style.boxShadow='0 0 0 3px rgba(230,57,70,0.09)'"
@@ -76,11 +81,16 @@
             <!-- 90-day Rule Banner -->
             <div style="background:linear-gradient(135deg,#fff8f0,#fff3e0);border:1px solid rgba(233,133,10,0.25);border-radius:12px;padding:18px 22px;margin-bottom:28px;display:flex;gap:14px;align-items:center;">
                 <div style="width:40px;height:40px;background:#e9850a;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2">
+                        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
                 </div>
                 <div>
                     <p style="font-size:0.85rem;font-weight:700;color:#92400e;margin-bottom:3px;">⚠ 90-Day Donation Rule</p>
-                    <p style="font-size:0.8rem;color:#78350f;">Donors must wait at least <strong>90 days</strong> between donations. This is automatically enforced by the database. Blood expires in <strong>35 days</strong>.</p>
+                    <p style="font-size:0.8rem;color:#78350f;">
+                        Donors must wait at least <strong>90 days</strong> between donations. This is automatically enforced by the database.
+                        Blood expires in <strong>35 days</strong>.
+                    </p>
                 </div>
             </div>
 
@@ -94,7 +104,9 @@
                 <button type="submit"
                     style="padding:12px 32px;background:#e63946;color:white;border:none;border-radius:10px;font-size:0.88rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:8px;box-shadow:0 4px 14px rgba(230,57,70,0.3);"
                     onmouseover="this.style.background='#c1121f';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='#e63946';this.style.transform='none'">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                    </svg>
                     Record Donation
                 </button>
             </div>
@@ -104,8 +116,59 @@
     </div>
 </div>
 
+<!-- Set default date -->
 <script>
-    const di = document.getElementById('donation_date');
-    if (di) di.valueAsDate = new Date();
+  const di = document.getElementById('donation_date');
+  if (di) di.valueAsDate = new Date();
+</script>
+
+<!-- Donation submit logic -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("donationForm");
+  const msgBox = document.getElementById("message");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const fd = new FormData(form);
+    const payload = {
+      donor_id: Number(fd.get("donor_id")),
+      donation_date: fd.get("donation_date"),
+      quantity_ml: Number(fd.get("quantity_ml")),
+      hemoglobin: Number(fd.get("hemoglobin")),
+      blood_pressure: fd.get("blood_pressure"),
+      notes: fd.get("notes") || null
+    };
+
+    msgBox.classList.remove("hidden", "success", "error");
+    msgBox.textContent = "Recording donation...";
+
+    try {
+      const res = await fetch("/api/donations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(data.error || data.message || "Failed to record donation");
+      }
+
+      msgBox.classList.add("success");
+      msgBox.textContent = data.message || "Donation recorded successfully, inventory updated.";
+
+      form.reset();
+      const di = document.getElementById("donation_date");
+      if (di) di.valueAsDate = new Date();
+    } catch (err) {
+      console.error(err);
+      msgBox.classList.add("error");
+      msgBox.textContent = err.message || "Error recording donation";
+    }
+  });
+});
 </script>
 {% endblock %}
