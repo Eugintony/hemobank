@@ -46,19 +46,19 @@ A full-stack web application for managing blood donations and inventory using Fl
 
 \## Features
 
-✅ Register blood donors
+ Register blood donors
 
-✅ Record blood donations
+Record blood donations
 
-✅ Manage blood inventory
+ Manage blood inventory
 
-✅ Track 90-day donation rule
+ Track 90-day donation rule
 
-✅ Monitor blood expiry dates
+ Monitor blood expiry dates
 
-✅ View real-time dashboard statistics
+ View real-time dashboard statistics
 
-✅ Search and filter donors by blood type
+ Search and filter donors by blood type
 
 
 
@@ -161,4 +161,5 @@ Eugintony
 \## Date
 
 February 2026
+
 
